@@ -1,3 +1,4 @@
+#!/usr/bin/env pybricks-micropython
 from pybricks.ev3devices import Motor, UltrasonicSensor
 from pybricks.parameters import Port, Direction
 from pybricks.tools import wait
@@ -24,8 +25,7 @@ integral = 0
 loop_frequency = 10
 loop_time = 1 / loop_frequency
 
-def filter_power(power):
-    return min(max(power, -100), 100)
+last_error = 0
 
 # Loop forever
 while True:
@@ -34,7 +34,7 @@ while True:
     front_distance = front_distance_sensor.distance()
 
     # Calculate the error
-    error = target_distance - front_distance
+    error = target_distance - right_distance
 
     # Add the error to the integral
     integral += error * loop_time
@@ -46,12 +46,12 @@ while True:
     output = kp * error + ki * integral + kd * derivative
 
     # Set the motor speeds based on the PID output
-    left_motor_speed = filter_power(output)
-    right_motor_speed = filter_power(output)
+    left_motor_speed = 50 - output
+    right_motor_speed = 50 + output
 
     # Set the motor speeds
-    left_motor.dc(left_motor_speed)
-    right_motor.dc(right_motor_speed)
+    left_motor.run(left_motor_speed)
+    right_motor.run(right_motor_speed)
 
     # Remember the last error
     last_error = error
