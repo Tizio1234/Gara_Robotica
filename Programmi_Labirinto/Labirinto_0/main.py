@@ -9,7 +9,7 @@ from sys import exit
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
 
-FRONT_TRIGGER_DISTANCE = 70
+FRONT_TRIGGER_DISTANCE = 35
 RIGHT_TRIGGER_DISTANCE = 100
 POWER = 50
 ROTATING_POWER = 25
