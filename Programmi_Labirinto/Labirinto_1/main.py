@@ -1,60 +1,42 @@
 #!/usr/bin/env pybricks-micropython
-from pybricks.ev3devices import Motor, UltrasonicSensor
+from pybricks.ev3devices import Motor, UltrasonicSensor, GyroSensor
 from pybricks.parameters import Port, Direction
 from pybricks.tools import wait
+from pybricks.robotics import DriveBase
+from math import cos, radians
 
 # Define motor and sensor objects
 left_motor = Motor(Port.A, Direction.COUNTERCLOCKWISE)
 right_motor = Motor(Port.D, Direction.COUNTERCLOCKWISE)
+robot = DriveBase(left_motor, right_motor, 55, 92)
 right_distance_sensor = UltrasonicSensor(Port.S2)
 front_distance_sensor = UltrasonicSensor(Port.S1)
+gyro_sensor = GyroSensor(Port.S3)
 
-# Set the target distance from the wall in mm
-target_distance = 50
+TARGET_DISTANCE = 100
+PROPORTIONAL_GAIN = 1.0
+DERIVATIVE_GAIN = 0.0
+INTEGRAL_GAIN = 0.0
+SPEED = 200
+TIME_DELTA = 10
 
-# Set the PID constants
-kp = 1.0  # Proportional gain
-ki = 0.0  # Integral gain
-kd = 0.0  # Derivative gain
+current_cte = 0
+last_cte = 0
+current_cter = 0
+current_sse = 0
+current_turning_rate = 0
 
-# Initialize error and integral variables
-error = 0
-integral = 0
+gyro_sensor.reset_angle(0)
 
-# Set the loop frequency in Hz
-loop_frequency = 10
-loop_time = 1 / loop_frequency
-
-last_error = 0
-
-# Loop forever
 while True:
-    # Get the distance readings from the sensors
-    right_distance = right_distance_sensor.distance()
-    front_distance = front_distance_sensor.distance()
+    right_distance = right_distance_sensor.distance() * cos(radians(abs(gyro_sensor.angle())))
 
-    # Calculate the error
-    error = target_distance - right_distance
+    current_cte = right_distance - TARGET_DISTANCE
 
-    # Add the error to the integral
-    integral += error * loop_time
+    current_cter = current_cte - last_cte
 
-    # Calculate the derivative
-    derivative = (error - last_error) / loop_time
+    current_turning_rate = PROPORTIONAL_GAIN * current_cte + DERIVATIVE_GAIN * current_cter
 
-    # Calculate the PID output
-    output = kp * error + ki * integral + kd * derivative
+    robot.drive(SPEED, current_turning_rate)
 
-    # Set the motor speeds based on the PID output
-    left_motor_speed = 50 - output
-    right_motor_speed = 50 + output
-
-    # Set the motor speeds
-    left_motor.run(left_motor_speed)
-    right_motor.run(right_motor_speed)
-
-    # Remember the last error
-    last_error = error
-
-    # Wait for the loop time to elapse
-    wait(loop_time)
+    wait(TIME_DELTA)

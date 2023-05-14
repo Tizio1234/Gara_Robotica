@@ -10,7 +10,7 @@ from sys import exit
 # Click "Open user guide" on the EV3 extension tab for more information.
 
 FRONT_TRIGGER_DISTANCE = 35
-RIGHT_TRIGGER_DISTANCE = 100
+RIGHT_TRIGGER_DISTANCE = 150
 POWER = 50
 ROTATING_POWER = 25
 RIGHT_ANGLE_ANGLE = 90
