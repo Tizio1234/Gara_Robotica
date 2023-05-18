@@ -1,9 +1,8 @@
 #!/usr/bin/env pybricks-micropython
 from pybricks.ev3devices import (Motor, UltrasonicSensor, GyroSensor)
-from pybricks.parameters import Port, Stop, Direction
-from pybricks.tools import wait, StopWatch
+from pybricks.parameters import Port, Direction
+from pybricks.tools import wait
 from pybricks.robotics import DriveBase
-from sys import exit
 
 
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
