@@ -13,7 +13,7 @@ RIGHT_TRIGGER_DISTANCE = 120
 RIGHT_MAX_DISTANCE = 180
 TARGET_DISTANCE = 70
 P_GAIN = .5
-SPEED = 150
+SPEED = 200
 ROTATING_SPEED = 100
 RIGHT_ANGLE_ANGLE = 90
 TIME_DELTA = 10
@@ -71,6 +71,7 @@ while True:
     right_distance, front_distance = measure()
     if front_distance <= FRONT_TRIGGER_DISTANCE:
         robot.stop()
+        motor_H(STOP)
         if right_distance <= RIGHT_TRIGGER_DISTANCE:
             motor_H(ROTATING_TO_LEFT)
             wait_for_angle(RIGHT_ANGLE_ANGLE)
