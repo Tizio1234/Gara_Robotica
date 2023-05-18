@@ -9,9 +9,12 @@ from pybricks.robotics import DriveBase
 # Click "Open user guide" on the EV3 extension tab for more information.
 
 FRONT_TRIGGER_DISTANCE = 35
-RIGHT_TRIGGER_DISTANCE = 150
-POWER = 50
-ROTATING_POWER = 25
+RIGHT_TRIGGER_DISTANCE = 120
+RIGHT_MAX_DISTANCE = 180
+TARGET_DISTANCE = 70
+P_GAIN = .5
+SPEED = 150
+ROTATING_SPEED = 75
 RIGHT_ANGLE_ANGLE = 90
 TIME_DELTA = 10
 
@@ -36,19 +39,19 @@ right_distance = 0
 front_distance = 0
 current_state = STOP
 
-def motors_power(dc_left, dc_right):
-    left_motor.dc(dc_left)
-    right_motor.dc(dc_right)
+def motors_speed(left_speed, right_speed):
+    left_motor.run(left_speed)
+    right_motor.run(right_speed)
 
 def motor_H(parameter):
     if parameter == FORWARD:
-        motors_power(POWER, POWER)
+        motors_speed(SPEED, SPEED)
     elif parameter == BACKWARDS:
-        motors_power(-POWER, -POWER)
+        motors_speed(-SPEED, -SPEED)
     elif parameter == ROTATING_TO_RIGHT:
-        motors_power(ROTATING_POWER, -ROTATING_POWER)
+        motors_speed(ROTATING_SPEED, -ROTATING_SPEED)
     elif parameter == ROTATING_TO_LEFT:
-        motors_power(-ROTATING_POWER, ROTATING_POWER)
+        motors_speed(-ROTATING_SPEED, ROTATING_SPEED)
     elif parameter == STOP:
         left_motor.stop()
         right_motor.stop()
@@ -67,6 +70,7 @@ def measure():
 while True:
     right_distance, front_distance = measure()
     if front_distance <= FRONT_TRIGGER_DISTANCE:
+        robot.stop()
         if right_distance <= RIGHT_TRIGGER_DISTANCE:
             motor_H(ROTATING_TO_LEFT)
             wait_for_angle(RIGHT_ANGLE_ANGLE)
@@ -76,6 +80,8 @@ while True:
             wait_for_angle(RIGHT_ANGLE_ANGLE)
             motor_H(STOP)
     else:
-        if current_state != FORWARD:
-            motor_H(FORWARD)
+        if right_distance < RIGHT_MAX_DISTANCE:
+            robot.drive(SPEED, (right_distance - TARGET_DISTANCE) * P_GAIN)
+        else:
+            robot.drive(SPEED, 0)
     wait(TIME_DELTA)
