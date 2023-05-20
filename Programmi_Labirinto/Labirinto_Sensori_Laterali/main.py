@@ -20,9 +20,10 @@ robot = DriveBase(left_motor, right_motor, 55, 100)
 robot.stop()
 
 P_GAIN = .8
-MAX_TURN_RATE = 70
-SPEED = 200
-TIME_DELTA = 10
+D_GAIN = .2
+MAX_TURN_RATE = 90
+SPEED = 230
+TIME_DELTA = 5
 
 def cte():
     return right_distance_sensor.distance() - left_distance_sensor.distance()
@@ -32,9 +33,12 @@ max_turn_rate = abs(MAX_TURN_RATE)
 
 current_turn_rate = 0
 current_cte = 0
+last_cte = 0
+current_cter = 0
 
 while True:
     current_cte = cte()
-    current_turn_rate = current_cte * P_GAIN
-    robot.drive(SPEED, min(max_turn_rate, max(current_turn_rate, min_turn_rate)))
+    current_cter = current_cte - last_cte
+    current_turn_rate = min(max_turn_rate, max(current_cte * P_GAIN + current_cter * D_GAIN, min_turn_rate))
+    robot.drive(SPEED, current_turn_rate)
     wait(TIME_DELTA)
