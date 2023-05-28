@@ -3,6 +3,7 @@ from pybricks.ev3devices import (Motor, UltrasonicSensor, GyroSensor)
 from pybricks.parameters import Port, Direction
 from pybricks.tools import wait
 from pybricks.robotics import DriveBase
+from PyPID import PropDer
 
 
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
@@ -13,11 +14,10 @@ RIGHT_TRIGGER_DISTANCE = 120
 RIGHT_MAX_DISTANCE = 180
 TARGET_DISTANCE = 70
 P_GAIN = .5
+D_GAIN = .1
 SPEED = 200
-ROTATING_SPEED = 100
 RIGHT_ANGLE_ANGLE = 90
 TIME_DELTA = 10
-
 
 FORWARD = 0
 ROTATING_TO_RIGHT = 1

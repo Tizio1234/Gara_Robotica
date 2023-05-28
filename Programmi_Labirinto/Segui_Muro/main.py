@@ -13,16 +13,16 @@ robot = DriveBase(left_motor, right_motor, 55, 92)
 right_distance_sensor = UltrasonicSensor(Port.S4)
 
 TARGET_DISTANCE = 150
-PROPORTIONAL_GAIN = .2
-DERIVATIVE_GAIN = 0.05
-INTEGRAL_GAIN = 0.25
+PROPORTIONAL_GAIN = 0.7
+DERIVATIVE_GAIN = 0.3
+INTEGRAL_GAIN = 0.1
 SPEED = 250
 TIME_DELTA = 10
 
 control = PropIntDer(PROPORTIONAL_GAIN, INTEGRAL_GAIN, DERIVATIVE_GAIN, 300)
 
 while True:
-    cte = min(right_distance_sensor.distance(), 300) - TARGET_DISTANCE
+    cte = min(right_distance_sensor.distance() - TARGET_DISTANCE, 150)
 
     control.update(cte)
 
