@@ -18,6 +18,7 @@ D_GAIN = .1
 SPEED = 200
 RIGHT_ANGLE_ANGLE = 90
 TIME_DELTA = 10
+ROTATING_SPEED = 100
 
 FORWARD = 0
 ROTATING_TO_RIGHT = 1
@@ -31,9 +32,6 @@ right_motor = Motor(Port.D, Direction.COUNTERCLOCKWISE)
 right_distance_sensor = UltrasonicSensor(Port.S2)
 front_distance_sensor = UltrasonicSensor(Port.S1)
 gyro_sensor = GyroSensor(Port.S3)
-
-robot = DriveBase(left_motor, right_motor, 55, 100)
-robot.stop()
 
 right_distance = 0
 front_distance = 0
@@ -70,7 +68,6 @@ def measure():
 while True:
     right_distance, front_distance = measure()
     if front_distance <= FRONT_TRIGGER_DISTANCE:
-        robot.stop()
         motor_H(STOP)
         if right_distance <= RIGHT_TRIGGER_DISTANCE:
             motor_H(ROTATING_TO_LEFT)
@@ -82,7 +79,7 @@ while True:
             motor_H(STOP)
     else:
         if right_distance < RIGHT_MAX_DISTANCE:
-            robot.drive(SPEED, (right_distance - TARGET_DISTANCE) * P_GAIN)
+            
         else:
-            robot.drive(SPEED, 0)
+            motor_H(FORWARD)
     wait(TIME_DELTA)
