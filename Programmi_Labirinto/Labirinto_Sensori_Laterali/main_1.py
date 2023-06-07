@@ -17,13 +17,13 @@ right_distance_sensor = UltrasonicSensor(Port.S2)
 gyro_sensor = GyroSensor(Port.S3, Direction.COUNTERCLOCKWISE)
 
 P_GAIN = .8
-D_GAIN = .4
+D_GAIN = .2
 A_P_GAIN = 1.5
 A_D_GAIN = .4
-MAX_TURN_RATE = 250
-SPEED = 250
+MAX_TURN_RATE = 170
+SPEED = 200
 WHEEL_DIAMETER = 55
-TIME_DELTA = 10
+TIME_DELTA = 5
 
 motors_speed = (SPEED/(WHEEL_DIAMETER * pi)) * 360
 
