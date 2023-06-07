@@ -11,7 +11,7 @@ from PyPID import *
 
 FRONT_TRIGGER_DISTANCE = 60
 RIGHT_TRIGGER_DISTANCE = 500
-TARGET_DISTANCE = 120
+TARGET_DISTANCE = 70
 WHEEL_DIAMETER = 55
 
 WALL_P_GAIN = .4
@@ -20,7 +20,7 @@ WALL_D_GAIN = .2
 SPEED = 200
 RIGHT_ANGLE_ANGLE = 80
 TIME_DELTA = 20
-ROTATING_SPEED = 100
+ROTATING_SPEED = 50
 
 motors_speed = (SPEED/(WHEEL_DIAMETER * pi))*360
 
@@ -30,8 +30,8 @@ rotating_motors_speed = (ROTATING_SPEED/(WHEEL_DIAMETER * pi))*360
 left_motor = Motor(Port.A, Direction.COUNTERCLOCKWISE)
 right_motor = Motor(Port.D, Direction.COUNTERCLOCKWISE)
 right_distance_sensor = UltrasonicSensor(Port.S2)
-front_distance_sensor = UltrasonicSensor(Port.S1)
-gyro_sensor = GyroSensor(Port.S3, Direction.COUNTERCLOCKWISE)
+front_distance_sensor = UltrasonicSensor(Port.S3)
+gyro_sensor = GyroSensor(Port.S4, Direction.COUNTERCLOCKWISE)
 
 wall_following_control = PropDer(WALL_P_GAIN, WALL_D_GAIN)
 
@@ -48,7 +48,11 @@ def ang_cte(current_ang_speed, target_ang_speed):
     return target_ang_speed - current_ang_speed
 
 def turn_of(angle):
+    run_motors(0, 0)
+    wait(500)
+    print("turn")
     if not angle: return
+    gyro_sensor.reset_angle(0)
     starting_angle = gyro_sensor.angle()
     target_angle = starting_angle + angle
     if angle > 0:
@@ -80,7 +84,6 @@ while True:
             cte = wall_cte(right_distance, TARGET_DISTANCE)
             wall_following_control.update(cte)
             ang_speed_control.update(ang_cte(gyro_sensor.speed(), wall_following_control.output))
-            print(cte)
             run_motors(motors_speed + wall_following_control.output, motors_speed - wall_following_control.output)
             wait(TIME_DELTA)
         else:
