@@ -8,13 +8,15 @@ from PyPID import *
 # Parametri fisici robot
 WHEEL_DIAMETER = 55
 
-WALL_P_GAIN = .8
+WALL_P_GAIN = 1
 WALL_D_GAIN = .3
+WALL_I_GAIN = .1
+CTE_LIST_SIZE = 200
 
 MAX_OUTPUT = 130
-MAX_FRONT_DISTANCE = 200
+MAX_FRONT_DISTANCE = 250
 
-SPEED = 200
+SPEED = 100
 TIME_DELTA = 10
 
 motors_speed = (SPEED/(WHEEL_DIAMETER * pi))*360
@@ -25,7 +27,7 @@ right_distance_sensor = UltrasonicSensor(Port.S2)
 left_distance_sensor = UltrasonicSensor(Port.S1)
 front_distance_sensor = UltrasonicSensor(Port.S3)
 
-wall_following_control = PropDer(WALL_P_GAIN, WALL_D_GAIN)
+wall_following_control = PropIntDer(WALL_P_GAIN, WALL_D_GAIN, WALL_I_GAIN, CTE_LIST_SIZE)
 
 def run_motors(left_speed, right_speed):
     left_motor.run(left_speed)
@@ -45,12 +47,23 @@ while True:
     left_distance = left_distance_sensor.distance()
     front_distance = front_distance_sensor.distance()
 
+    if front_distance == 255:
+        front_distance = 1
+    
+    if right_distance == 255:
+        right_distance = 1
+
+    if left_distance == 255:
+        left_distance = 1
+
     current_wall_cte = get_wall_cte(left_distance, right_distance)
 
     wall_following_control.update(current_wall_cte)
 
-    current_output = min(max(wall_following_control.output * 120 / (max(-MAX_FRONT_DISTANCE, min(front_distance, MAX_FRONT_DISTANCE))), -MAX_OUTPUT), MAX_OUTPUT)
+    current_output = min(max(wall_following_control.output * 120 / (min(front_distance, MAX_FRONT_DISTANCE)), -MAX_OUTPUT), MAX_OUTPUT)
 
     run_motors(motors_speed + current_output, motors_speed - current_output)
+
+    print("Set output")
 
     wait(TIME_DELTA)
