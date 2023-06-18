@@ -55,7 +55,7 @@ while True:
             rotating_speed_coefficient = 0
             last_active_sensor = False
         else:
-            rotating_speed_coefficient = 0.3
+            rotating_speed_coefficient = 0
     
     robot.drive(ROBOT_SPEED, ROTATING_SPEED * rotating_speed_coefficient)
 
