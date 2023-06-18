@@ -21,8 +21,8 @@ left_color_sensor = ColorSensor(Port.S1)
 right_color_sensor = ColorSensor(Port.S4)
 
 # motori
-left_motor = Motor(Port.C, Direction.COUNTERCLOCKWISE)
-right_motor = Motor(Port.D, Direction.COUNTERCLOCKWISE)
+left_motor = Motor(Port.A, Direction.COUNTERCLOCKWISE)
+right_motor = Motor(Port.C, Direction.COUNTERCLOCKWISE)
 
 # oggetti controllo
 robot = DriveBase(left_motor, right_motor, 55, 160)
@@ -50,10 +50,12 @@ while True:
     else:
         if not front_sensor_state and right_sensor_state:
             rotating_speed_coefficient = 1
+            last_active_sensor = True
         elif front_sensor_state and not right_sensor_state:
             rotating_speed_coefficient = 0
+            last_active_sensor = False
         else:
-            rotating_speed_coefficient = 0.5
+            rotating_speed_coefficient = 0.3
     
     robot.drive(ROBOT_SPEED, ROTATING_SPEED * rotating_speed_coefficient)
 
