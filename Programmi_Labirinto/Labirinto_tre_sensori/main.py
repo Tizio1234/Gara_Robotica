@@ -1,5 +1,5 @@
 #!/usr/bin/env pybricks-micropython
-from pybricks.ev3devices import (Motor, UltrasonicSensor, GyroSensor)
+from pybricks.ev3devices import (Motor, UltrasonicSensor)
 from pybricks.parameters import Port, Direction
 from pybricks.tools import wait
 from math import pi

@@ -1,11 +1,9 @@
 #!/usr/bin/env pybricks-micropython
 from pybricks.hubs import EV3Brick
-from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
-                                 InfraredSensor, UltrasonicSensor, GyroSensor)
-from pybricks.parameters import Port, Stop, Direction, Button, Color
-from pybricks.tools import wait, StopWatch, DataLog
+from pybricks.ev3devices import (Motor, ColorSensor,)
+from pybricks.parameters import Port, Direction
 from pybricks.robotics import DriveBase
-from pybricks.media.ev3dev import SoundFile, ImageFile
+from PyPID import PropDer
 
 
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
@@ -22,15 +20,22 @@ SENSORS_LINE_VALUES = [7, 7, 7, 7]
 WHEEL_DIAMETER = 55 # mm
 AXLE_TRACK = 188 # mm
 SPEED = 200 # mm/S
+P_GAIN = 1.0
+D_GAIN = 0.3
+
+line_following_control = PropDer(P_GAIN, D_GAIN)
 
 # Create your objects here.
 #ev3 = EV3Brick()
 
-motor_L = Motor(Port.D, Direction.CLOCKWISE if not LEFT_MOTOR_INVERTED else Direction.COUNTERCLOCKWISE)
-motor_R = Motor(Port.A, Direction.CLOCKWISE if not LEFT_MOTOR_INVERTED else Direction.COUNTERCLOCKWISE)
+motor_L = Motor(Port.A, Direction.CLOCKWISE if not LEFT_MOTOR_INVERTED else Direction.COUNTERCLOCKWISE)
+motor_R = Motor(Port.C, Direction.CLOCKWISE if not LEFT_MOTOR_INVERTED else Direction.COUNTERCLOCKWISE)
 robot = DriveBase(motor_R, motor_L, WHEEL_DIAMETER, AXLE_TRACK)
 
 robot_sensors = [ColorSensor(sensor_port) for sensor_port in SENSORS_PORTS]
 
-# Write your program here.
-#ev3.speaker.beep()
+COEFFICIENTS = [1/(sensor_line - sensor_env) for sensor_env, sensor_line in zip(SENSORS_ENVIRONMENT_VALUES, SENSORS_LINE_VALUES)]
+OFFSETS = [-coeff * sensor_env for coeff, sensor_env in zip(COEFFICIENTS, SENSORS_ENVIRONMENT_VALUES)]
+
+print(COEFFICIENTS)
+print(OFFSETS)
