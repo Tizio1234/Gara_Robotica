@@ -19,7 +19,7 @@ SENSORS_ENVIRONMENT_VALUES = [50, 50, 50, 50]
 SENSORS_LINE_VALUES = [7, 7, 7, 7]
 WHEEL_DIAMETER = 55 # mm
 AXLE_TRACK = 188 # mm
-SPEED = 200 # mm/S
+SPEED = 100 # mm/S
 P_GAIN = 1.0
 D_GAIN = 0.3
 
@@ -29,13 +29,16 @@ line_following_control = PropDer(P_GAIN, D_GAIN)
 #ev3 = EV3Brick()
 
 motor_L = Motor(Port.A, Direction.CLOCKWISE if not LEFT_MOTOR_INVERTED else Direction.COUNTERCLOCKWISE)
-motor_R = Motor(Port.C, Direction.CLOCKWISE if not LEFT_MOTOR_INVERTED else Direction.COUNTERCLOCKWISE)
+motor_R = Motor(Port.C, Direction.CLOCKWISE if not RIGHT_MOTOR_INVERTED else Direction.COUNTERCLOCKWISE)
 robot = DriveBase(motor_R, motor_L, WHEEL_DIAMETER, AXLE_TRACK)
 
-robot_sensors = [ColorSensor(sensor_port) for sensor_port in SENSORS_PORTS]
+SENSORS = [ColorSensor(sensor_port) for sensor_port in SENSORS_PORTS]
 
 COEFFICIENTS = [1/(sensor_line - sensor_env) for sensor_env, sensor_line in zip(SENSORS_ENVIRONMENT_VALUES, SENSORS_LINE_VALUES)]
 OFFSETS = [-coeff * sensor_env for coeff, sensor_env in zip(COEFFICIENTS, SENSORS_ENVIRONMENT_VALUES)]
 
-print(COEFFICIENTS)
-print(OFFSETS)
+while True:
+    sensors_cte = -1.5 * SENSORS[0].reflection() - 0.5 * SENSORS[1].reflection() + 0.5 * SENSORS[2].reflection() + 1.5 * SENSORS[3].reflection()
+    line_following_control.update(sensors_cte)
+
+    robot.drive(SPEED, line_following_control.output)
